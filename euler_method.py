@@ -40,5 +40,3 @@ if __name__ == '__main__':
     x0 = 1
     t = np.linspace(0,10,100)
     solve_ode(func_1, x0, t)
-
-    # solve_to(f=func_1, x0=1, t1=0, t2=2)
