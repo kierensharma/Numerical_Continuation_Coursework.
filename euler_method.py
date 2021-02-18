@@ -32,6 +32,7 @@ def solve_ode(func, x0, t):
 
     return x
 
+# Defines ODE function.
 def func_1(x, t):
     return x
 

@@ -1,17 +1,19 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-# Single Euler step function, with step size h
+# Single Euler step function, with step size h.
 def euler_step(f, x0, t0, h):
     x1 =  x0 + h*f(x0,t0)
 
     return x1
 
-def RK4_step(f,x0,t0,h):
-
+# Single 4th-order Runga Kutta step function.
+def RK4_step():
+    x1 = 
+    
     return x1
 
-# Uses 'euler_step' between two points (x1,t1) and (x2,t2), with step delta_max
+# Uses 'euler_step' between two points (x1,t1) and (x2,t2), with step delta_max.
 def solve_to(f, x0, t1, t2, method):
     delta_max = 5
     t_current = t1
@@ -45,13 +47,9 @@ def solve_ode(func, x0, t, method):
     for n in range(len(t)-1):
         x[n+1] = solve_to(func, x[n], t[n], t[n+1], method)
 
-    plt.plot(t,x)
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.show()
-
     return x
 
+# Defines ODE function.
 def func_1(x, t):
     return x
 
@@ -59,4 +57,4 @@ def func_1(x, t):
 if __name__ == '__main__':
     x0 = 1
     t = np.linspace(0,10,100)
-    solve_ode(func_1, x0, t)
+    solve_ode(func_1, x0, t, 'Euler')
