@@ -30,11 +30,6 @@ def solve_ode(func, x0, t):
     for n in range(len(t)-1):
         x[n+1] = solve_to(func, x[n], t[n], t[n+1])
 
-    plt.plot(t,x)
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.show()
-
     return x
 
 def func_1(x, t):
@@ -44,4 +39,12 @@ def func_1(x, t):
 if __name__ == '__main__':
     x0 = 1
     t = np.linspace(0,10,100)
-    solve_ode(func_1, x0, t)
+    x = solve_ode(func_1, x0, t)
+
+    x_true = np.exp(t)
+
+    plt.plot(t,x,'b.-',t,x_true,'r-')
+    plt.legend(['Euler','True'])
+    plt.grid(True)
+    plt.title("Solution of $x'=x , x(0)=1$")
+    plt.show()
