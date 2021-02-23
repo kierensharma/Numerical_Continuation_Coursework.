@@ -43,6 +43,7 @@ if __name__ == '__main__':
     ts = np.linspace(0,10,100)
     f = lambda x,t: x
 
+    # xs = solve_ode(f, x0, ts, 1)
     # x_true = np.exp(t)
 
     # plt.plot(t,x,'b.-',t,x_true,'r-')
@@ -52,7 +53,7 @@ if __name__ == '__main__':
     # plt.show()
 
     errors = []
-    delta_max_range = np.logspace(-6, 0, 20)
+    delta_max_range = np.logspace(-6, -1, 20)
 
     for delta_max in tqdm(delta_max_range):
         xs = solve_ode(f, x0, ts, delta_max)

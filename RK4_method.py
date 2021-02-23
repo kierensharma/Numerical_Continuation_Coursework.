@@ -47,11 +47,11 @@ if __name__ == '__main__':
     x0 = 1
     ts = np.linspace(0,10,100)
     f = lambda x,t: x
-    x = solve_ode(f, x0, ts, 1)
 
+    # xs = solve_ode(f, x0, ts, 1)
     # x_true = np.exp(ts)
 
-    # plt.plot(ts,x,'b.-',ts,x_true,'r-')
+    # plt.plot(ts,xs,'b.-',ts,x_true,'r-')
     # plt.legend(['RK4','True'])
     # plt.grid(True)
     # plt.title("Solution of $x'=x , x(0)=1$")
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     
 
     errors = []
-    delta_max_range = np.logspace(-6, 0, 20)
+    delta_max_range = np.logspace(-6, -1, 20)
 
     for delta_max in tqdm(delta_max_range):
         xs = solve_ode(f, x0, ts, delta_max)
