@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
+from tqdm import tqdm
 # Single Euler step function, with step size h
 def euler_step(f, x0, t0, h):
     x1 =  x0 + h*f(x0,t0)
@@ -33,7 +33,7 @@ def solve_ode(func, x0, t, delta_max):
 
 # Calculates the global error by suming the differences between the actual and estimated 'x' values
 def error(xs, ts):
-    error =  sum(abs(x-np.exp(t)) for x, t in zip(xs, ts))
+    error =  sum([abs(x-np.exp(t)) for x, t in zip(xs, ts)])
 
     return error
 
@@ -43,13 +43,15 @@ if __name__ == '__main__':
     f = lambda x,t: x 
 
     errors = []
-    delta_max_range = np.logspace(-6, 0, 20)
+    delta_max_range = np.logspace(-9, 0, 20)
 
-    for delta_max in delta_max_range:
+    for delta_max in tqdm(delta_max_range):
         xs = solve_ode(f, x0, ts, delta_max)
         errors.append(error(xs, ts))
 
     plt.plot(delta_max_range, errors)
+    plt.xscale('log')
+    plt.yscale('log')
     plt.xlabel('Stepsise')
     plt.ylabel('Error')
     plt.grid(True)
