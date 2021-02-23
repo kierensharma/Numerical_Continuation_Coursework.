@@ -1,12 +1,15 @@
+# %%
 import numpy as np
 from matplotlib import pyplot as plt
 
+# %%
 # Single Euler step function, with step size h
 def euler_step(f, x0, t0, h):
     x1 =  x0 + h*f(x0,t0)
 
     return x1
 
+# %%
 # Uses 'euler_step' between two points (x1,t1) and (x2,t2), with step delta_max
 def solve_to(f, x0, t1, t2):
     delta_max = 5
@@ -23,6 +26,7 @@ def solve_to(f, x0, t1, t2):
 
     return x_current
 
+# %%
 # Uses 'solve_to' to generate a seriese of estimates for x1,x2,x3,...
 def solve_ode(func, x0, t):
     x = np.zeros(len(t))
@@ -32,11 +36,12 @@ def solve_ode(func, x0, t):
 
     return x
 
+# %%
 # Defines ODE function.
 def func_1(x, t):
     return x
 
-
+# %%
 if __name__ == '__main__':
     x0 = 1
     t = np.linspace(0,10,100)
@@ -49,3 +54,5 @@ if __name__ == '__main__':
     plt.grid(True)
     plt.title("Solution of $x'=x , x(0)=1$")
     plt.show()
+
+# %%
