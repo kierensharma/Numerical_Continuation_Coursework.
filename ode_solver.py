@@ -60,6 +60,10 @@ def error(xs, ts):
 
     return error
 
+# x = np.arrray([x, t])
+def ode_system(x, t):
+    return np.array([t, -x])
+
 if __name__ == '__main__':
     x0 = 1
     ts = np.linspace(0,10,100)
