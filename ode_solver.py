@@ -9,10 +9,13 @@ def main(filename=None):
     f = lambda x,t: x
 
     method = 'RK4'
-    t, x, v = solve_ode(f, x0, ts, 1, method)
+    t, x, v = solve_ode(f, X0, ts, 1, method)
     sol_true = odeint(f_shm, X0, ts)
     true_x_sol= sol_true[:, 0]
     true_v_sol = sol_true[:, 1]
+
+    fig = plot_solution(t, x, v, true_x_sol, true_v_sol)
+    plt.show
 
 
 # Single Euler step function, with step size h.
@@ -81,7 +84,22 @@ def f_shm(X, t):
     dXdt = [dxdt, dvdt]
     return dXdt
 
-# def plot_solution(t, x, v):
+
+# Function to plot values of x and t, alongside real solution
+def plot_solution(t, x, v, true_x_sol, true_v_sol):
+    fig = plt.figure()
+    plt.set_title('Solution of system of ODEs')
+
+    plt.plot(t, x, color='green', linewidth=2, label=r'$x$')
+    plt.plot(t, v, color='blue', linewidth=2, label=r'$v$')
+
+    plt.plot(t, true_x_sol, color='g.-', linewidth=2, label=r'$True x$')
+    plt.plot(t, true_v_sol, color='b.-', linewidth=2, label=r'$True v$')
+
+    plt.set_xlabel('t')
+    plt.legend()
+
+    return fig
 
 
 if __name__ == '__main__':
