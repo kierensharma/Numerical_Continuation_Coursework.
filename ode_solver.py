@@ -5,17 +5,23 @@ from scipy.integrate import odeint
 
 def main(filename=None):
     X0 = [0, 1]
-    ts = np.linspace(0,10,200)
-    f = lambda x,t: x
+    t = np.linspace(0,10,200)
 
-    method = 'RK4'
-    t, x, v = solve_ode(f, X0, ts, 1, method)
-    sol_true = odeint(f_shm, X0, ts)
+    t, x, v = solve_ode(f_shm, X0, t, 1, 'RK4')
+    sol_true = odeint(f_shm, X0, t)
     true_x_sol= sol_true[:, 0]
     true_v_sol = sol_true[:, 1]
 
     fig = plot_solution(t, x, v, true_x_sol, true_v_sol)
-    plt.show
+
+    if filename is None:
+        # $ ./solveode.py
+        # (show on screen)
+        plt.show()
+    else:
+        # $ ./solveode.py myfig.pdf
+        # (save to file)
+        fig.savefig(filename)
 
 
 # Single Euler step function, with step size h.
@@ -68,7 +74,7 @@ def solve_ode(func, x0, t, delta_max, method):
     for n in range(len(t)-1):
         x[n+1] = solve_to(func, x[n], t[n], t[n+1], delta_max, method)
 
-    return t, x, v
+    return x, v
 
 # Calculates the global error by suming the differences between the actual and estimated 'x' values
 def error(xs, ts):
@@ -97,38 +103,13 @@ def plot_solution(t, x, v, true_x_sol, true_v_sol):
     plt.plot(t, true_v_sol, color='b.-', linewidth=2, label=r'$True v$')
 
     plt.set_xlabel('t')
+    plt.grid()
     plt.legend()
 
     return fig
 
 
 if __name__ == '__main__':
-   
-
-    plt.plot(ts,xs,'b.-',ts,x_true,'r-')
-    plt.legend([method,'True'])
-    plt.grid(True)
-    plt.title("Solution of $x'=x , x(0)=1$")
-    plt.show()
-
-    # Euler_errors = []
-    # RK4_errors = []
-    # delta_max_range = np.logspace(-6, -1, 20)
-
-    # for delta_max in tqdm(delta_max_range):
-    #     Euler_xs = solve_ode(f, x0, ts, delta_max, method='Euler')
-    #     RK4_xs = solve_ode(f, x0, ts, delta_max, method='RK4')
-    #     Euler_errors.append(error(Euler_xs, ts))
-    #     RK4_errors.append(error(RK4_xs, ts))
-
-
-    # plt.plot(delta_max_range, Euler_errors, 'b-', delta_max_range, RK4_errors, 'r-')
-    # plt.legend(['Euler method','RK4 method'])
-    # plt.xscale('log')
-    # plt.yscale('log')
-    # plt.xlabel('Step-size')
-    # plt.ylabel('Error')
-    # plt.grid(True)
-    # plt.title("Plot of global error against step-size, for both methods")
-    # plt.savefig('Both_error_plot.pdf')
-    # plt.show()
+    import sys
+    args = sys.argv[1:]
+    main(*args)
