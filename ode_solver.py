@@ -7,19 +7,17 @@ def main(filename=None):
     X0 = [0, 1]
     t = np.linspace(0,10,200)
 
-    x, v = solve_ode(f_shm, X0, t, 1, 'RK4')
-    sol_true = odeint(f_shm, X0, t)
+    x, v = solve_ode(func, X0, t, 1, 'RK4')
+    sol_true = odeint(func, X0, t)
     true_x_sol= sol_true[:, 0]
     true_v_sol = sol_true[:, 1]
 
     fig = plot_solution(t, x, v, true_x_sol, true_v_sol)
 
     if filename is None:
-        # $ ./solveode.py
         # (show on screen)
         plt.show()
     else:
-        # $ ./solveode.py myfig.pdf
         # (save to file)
         fig.savefig(filename)
 
@@ -90,7 +88,7 @@ def error(xs, ts):
     return error
 
 # X = np.arrray([x, v])
-def f_shm(X, t):
+def func(X, t):
     x, v = X
     dxdt = v
     dvdt = -x
