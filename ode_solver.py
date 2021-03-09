@@ -7,7 +7,7 @@ def main(filename=None):
     X0 = [0, 1]
     t = np.linspace(0,10,200)
 
-    t, x, v = solve_ode(f_shm, X0, t, 1, 'RK4')
+    x, v = solve_ode(f_shm, X0, t, 1, 'RK4')
     sol_true = odeint(f_shm, X0, t)
     true_x_sol= sol_true[:, 0]
     true_v_sol = sol_true[:, 1]
@@ -69,11 +69,18 @@ def solve_to(f, x0, t1, t2, method):
     return x_current
 
 # Uses 'solve_to' to generate a seriese of estimates for x1,x2,x3,...
-def solve_ode(func, x0, t, delta_max, method):
+def solve_ode(func, X0, t, delta_max, method):
     x = np.zeros(len(t))
-    x[0] = x0
+    v = np.zeros(len(t))
+    Sol = np.column_stack((x, v))
+    Sol[0][0] = X0[0]
+    Sol[0][1] = X0[1]
+
     for n in range(len(t)-1):
-        x[n+1] = solve_to(func, x[n], t[n], t[n+1], delta_max, method)
+        Sol[n+1] = solve_to(func, Sol[n], t[n], t[n+1], delta_max, method)
+
+    x = Sol[:, 0]
+    v = Sol[:, 1]
 
     return x, v
 
@@ -89,21 +96,22 @@ def f_shm(X, t):
     dxdt = v
     dvdt = -x
     dXdt = [dxdt, dvdt]
-    return dXdt
+
+    return np.asarray(dXdt)
 
 
 # Function to plot values of x and t, alongside real solution
 def plot_solution(t, x, v, true_x_sol, true_v_sol):
     fig = plt.figure()
-    plt.set_title('Solution of system of ODEs')
+    plt.title('Solution of system of ODEs')
 
     plt.plot(t, x, color='green', linewidth=2, label=r'$x$')
     plt.plot(t, v, color='blue', linewidth=2, label=r'$v$')
 
-    plt.plot(t, true_x_sol, color='g.-', linewidth=2, label=r'$True x$')
-    plt.plot(t, true_v_sol, color='b.-', linewidth=2, label=r'$True v$')
+    plt.plot(t, true_x_sol, 'g.-', linewidth=2, label=r'$True x$')
+    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'$True v$')
 
-    plt.set_xlabel('t')
+    plt.xlabel('t')
     plt.grid()
     plt.legend()
 
