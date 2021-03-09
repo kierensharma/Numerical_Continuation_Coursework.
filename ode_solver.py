@@ -31,18 +31,19 @@ def euler_step(f, x0, t0, h):
     return x1
 
 # Single 4th-order Runga Kutta step function.
-def RK4_step(f, x0, t0, h):
-    k1 = h*f(x0, t0)
-    k2 = h*f(x0 + 0.5*k1, t0 + 0.5*h)
-    k3 = h*f(x0 + 0.5*k2, t0 + 0.5*h)
-    k4 = h*f(x0 + k3, t0 + h)
-
-    x1 = x0 + (1/6)*(k1 + 2*k2 + 2*k3 + k4)
-
+def RK4_step():
+    x1 = 
+    
     return x1
 
+<<<<<<< HEAD
 # Uses 'euler_step' or 'RK4_step between two points (x1,t1) and (x2,t2), with step delta_max.
 def solve_to(f, x0, t1, t2, delta_max, method):
+=======
+# Uses 'euler_step' between two points (x1,t1) and (x2,t2), with step delta_max.
+def solve_to(f, x0, t1, t2, method):
+    delta_max = 5
+>>>>>>> parent of 5eb5e93... Working Euler & RK4 seperate methods & error plots
     t_current = t1
     x_current = x0
 

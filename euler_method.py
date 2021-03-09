@@ -1,7 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-
 # Single Euler step function, with step size h
 def euler_step(f, x0, t0, h):
     x1 =  x0 + h*f(x0,t0)
@@ -41,6 +40,7 @@ def error(xs, ts):
 if __name__ == '__main__':
     x0 = 1
     ts = np.linspace(0,10,100)
+<<<<<<< HEAD
     f = lambda x,t: x
 
     # xs = solve_ode(f, x0, ts, 1)
@@ -54,6 +54,12 @@ if __name__ == '__main__':
 
     errors = []
     delta_max_range = np.logspace(-6, -1, 20)
+=======
+    f = lambda x,t: x 
+
+    errors = []
+    delta_max_range = np.logspace(-9, 0, 20)
+>>>>>>> parent of 5eb5e93... Working Euler & RK4 seperate methods & error plots
 
     for delta_max in tqdm(delta_max_range):
         xs = solve_ode(f, x0, ts, delta_max)
@@ -62,9 +68,8 @@ if __name__ == '__main__':
     plt.plot(delta_max_range, errors)
     plt.xscale('log')
     plt.yscale('log')
-    plt.xlabel('Step-size')
+    plt.xlabel('Stepsise')
     plt.ylabel('Error')
     plt.grid(True)
-    plt.title("Plot of global error against step-size, for Euler method")
-    plt.savefig('Figures/Euler_error_plot.pdf')
+    plt.title("Error plot for Euler method")
     plt.show()
