@@ -100,15 +100,16 @@ def func(X, t):
 # Function to plot values of x and t, alongside real solution
 def plot_solution(t, x, v, true_x_sol, true_v_sol):
     fig = plt.figure()
-    plt.title('Solution of system of ODEs')
+    plt.title('Time series: $x, v$ against $t$')
 
     plt.plot(t, x, color='green', linewidth=2, label=r'$x$')
     plt.plot(t, v, color='blue', linewidth=2, label=r'$v$')
 
-    plt.plot(t, true_x_sol, 'g.-', linewidth=2, label=r'$True x$')
-    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'$True v$')
+    plt.plot(t, true_x_sol, 'g.-', linewidth=2, label=r'True $x$')
+    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'True $v$')
 
     plt.xlabel('t')
+    plt.yticks([-1, 0, 1])
     plt.grid()
     plt.legend()
 
