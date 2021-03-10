@@ -99,11 +99,12 @@ def plot_solution(t, x, v, true_x_sol, true_v_sol):
     fig = plt.figure()
     plt.title('Time series: $x, v$ against $t$')
 
-    plt.plot(t, x, color='green', linewidth=2, label=r'$x$')
-    plt.plot(t, v, color='blue', linewidth=2, label=r'$v$')
+    plt.plot(t, x, color='C0', linewidth=2, label=r'$x$')
+    plt.plot(t, v, color='C1', linewidth=2, label=r'$v$')
 
-    plt.plot(t, true_x_sol, 'g.-', linewidth=2, label=r'True $x$')
-    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'True $v$')
+    plt.plot(t, true_x_sol, color='C0', linestyle=':', linewidth=2, label=r'True $x$')
+    plt.plot(t, true_v_sol, color='C1', linestyle=':', linewidth=2, label=r'True $v$')
+
 
     plt.xlabel('t')
     plt.yticks([-1, 0, 1])

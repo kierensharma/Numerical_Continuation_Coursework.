@@ -4,7 +4,7 @@ from tqdm import tqdm
 from scipy.integrate import odeint
 
 def main(filename=None):
-    X0 = np.array([5, 10])
+    X0 = np.array([5, 12])
     t = np.linspace(0,10,200)
 
     x, v = solve_ode(predator_prey, X0, t, 1, 'RK4')
@@ -87,7 +87,8 @@ def error(xs, ts):
 # X = np.arrray([x, y])
 def predator_prey(X, t):
     a = 1
-    b = 0.1
+    # b in [0.1, 0.5]
+    b = 0.26
     d = 0.1
 
     x, y = X
@@ -101,13 +102,13 @@ def predator_prey(X, t):
 # Function to plot values of x and t, alongside real solution
 def plot_solution(t, x, v, true_x_sol, true_v_sol):
     fig = plt.figure()
-    plt.title('Time series: $x, v$ against $t$')
+    plt.title('Predator-prey System')
 
-    plt.plot(t, x, color='green', linewidth=2, label=r'$x$')
-    plt.plot(t, v, color='blue', linewidth=2, label=r'$v$')
+    plt.plot(t, x, color='C0', linewidth=2, label=r'$x$')
+    plt.plot(t, v, color='C1', linewidth=2, label=r'$y$')
 
-    plt.plot(t, true_x_sol, 'g.-', linewidth=2, label=r'True $x$')
-    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'True $v$')
+    plt.plot(t, true_x_sol, color='C0', linestyle=':', linewidth=2, label=r'True $x$')
+    plt.plot(t, true_v_sol, color='C1', linestyle=':', linewidth=2, label=r'True $y$')
 
     plt.xlabel('t')
     plt.grid()
