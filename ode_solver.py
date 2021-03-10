@@ -27,6 +27,7 @@ def euler_step(f, x0, t0, h):
 
     return x1
 
+
 # Single 4th-order Runga Kutta step function.
 def RK4_step(f, x0, t0, h):
     k1 = h*f(x0, t0)
@@ -37,6 +38,7 @@ def RK4_step(f, x0, t0, h):
     x1 = x0 + (1/6)*(k1 + 2*k2 + 2*k3 + k4)
 
     return x1
+
 
 # Uses 'euler_step' or 'RK4_step between two points (x1,t1) and (x2,t2), with step delta_max.
 def solve_to(f, x0, t1, t2, delta_max, method):
@@ -64,6 +66,7 @@ def solve_to(f, x0, t1, t2, delta_max, method):
 
     return x_current
 
+
 # Uses 'solve_to' to generate a seriese of estimates for x1,x2,x3,...
 def solve_ode(func, X0, t, delta_max, method):
     Sol = np.zeros((t.size, X0.size))
@@ -74,11 +77,13 @@ def solve_ode(func, X0, t, delta_max, method):
 
     return Sol
 
+
 # Calculates the global error by suming the differences between the actual and estimated 'x' values
 def error(xs, ts):
     error =  sum([abs(x-np.exp(t)) for x, t in zip(xs, ts)])
 
     return error
+
 
 # X = np.arrray([x, v])
 def func(X, t):
