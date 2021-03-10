@@ -4,7 +4,7 @@ from tqdm import tqdm
 from scipy.integrate import odeint
 
 def main(filename=None):
-    X0 = np.array([0, 1])
+    X0 = [5, 10]
     t = np.linspace(0,10,200)
 
     x, v = solve_ode(func, X0, t, 1, 'RK4')
@@ -67,8 +67,11 @@ def solve_to(f, x0, t1, t2, delta_max, method):
 
 # Uses 'solve_to' to generate a seriese of estimates for x1,x2,x3,...
 def solve_ode(func, X0, t, delta_max, method):
-    Sol = np.zeros((t.size, X0.size))
-    Sol[0] = X0
+    x = np.zeros(len(t))
+    v = np.zeros(len(t))
+    Sol = np.column_stack((x, v))
+    Sol[0][0] = X0[0]
+    Sol[0][1] = X0[1]
 
     for n in range(len(t)-1):
         Sol[n+1] = solve_to(func, Sol[n], t[n], t[n+1], delta_max, method)
@@ -86,27 +89,26 @@ def error(xs, ts):
 
 # X = np.arrray([x, v])
 def func(X, t):
-    x, v = X
-    dxdt = v
-    dvdt = -x
-    dXdt = np.array([dxdt, dvdt])
+    x, y = X
+    dxdt = x*(1 - x) - (1*x*y)/(0.1 + x)
+    dvdt = 0.26*y*(1 - y/x)
+    dXdt = [dxdt, dvdt]
 
-    return dXdt
+    return np.asarray(dXdt)
 
 
 # Function to plot values of x and t, alongside real solution
 def plot_solution(t, x, v, true_x_sol, true_v_sol):
     fig = plt.figure()
-    plt.title('Time series: $x, v$ against $t$')
+    plt.title('Predator-prey System')
 
     plt.plot(t, x, color='green', linewidth=2, label=r'$x$')
     plt.plot(t, v, color='blue', linewidth=2, label=r'$v$')
 
     plt.plot(t, true_x_sol, 'g.-', linewidth=2, label=r'True $x$')
-    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'True $v$')
+    plt.plot(t, true_v_sol, 'b.-', linewidth=2, label=r'True $y$')
 
     plt.xlabel('t')
-    plt.yticks([-1, 0, 1])
     plt.grid()
     plt.legend()
 
