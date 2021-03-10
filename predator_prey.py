@@ -7,12 +7,11 @@ def main(filename=None):
     X0 = np.array([5, 12])
     t = np.linspace(0,10,200)
 
-    x, v = solve_ode(predator_prey, X0, t, 1, 'RK4')
-    sol_true = odeint(predator_prey, X0, t)
-    true_x_sol= sol_true[:, 0]
-    true_v_sol = sol_true[:, 1]
+    Sol = solve_ode(predator_prey, X0, t, 1, 'RK4')
+    Sol_true = odeint(predator_prey, X0, t)
 
-    fig = plot_solution(t, x, v, true_x_sol, true_v_sol)
+    varbs = ['x', 'v']
+    fig = plot_solution(varbs, t, Sol, Sol_true)
 
     if filename is None:
         # (show on screen)
@@ -73,10 +72,7 @@ def solve_ode(func, X0, t, delta_max, method):
     for n in range(len(t)-1):
         Sol[n+1] = solve_to(func, Sol[n], t[n], t[n+1], delta_max, method)
 
-    x = Sol[:, 0]
-    v = Sol[:, 1]
-
-    return x, v
+    return Sol
 
 # Calculates the global error by suming the differences between the actual and estimated 'x' values
 def error(xs, ts):
@@ -100,15 +96,14 @@ def predator_prey(X, t):
 
 
 # Function to plot values of x and t, alongside real solution
-def plot_solution(t, x, v, true_x_sol, true_v_sol):
+def plot_solution(varbs, t, Sol, Sol_true):
+    cycle = plt.rcParams['axes.prop_cycle'].by_key()['color']
     fig = plt.figure()
     plt.title('Predator-prey System')
 
-    plt.plot(t, x, color='C0', linewidth=2, label=r'$x$')
-    plt.plot(t, v, color='C1', linewidth=2, label=r'$y$')
-
-    plt.plot(t, true_x_sol, color='C0', linestyle=':', linewidth=2, label=r'True $x$')
-    plt.plot(t, true_v_sol, color='C1', linestyle=':', linewidth=2, label=r'True $y$')
+    for i,v in zip(range(Sol[0].size), varbs):
+        plt.plot(t, Sol[:, i], color=cycle[i], label=v)
+        plt.plot(t, Sol_true[:, i], color=cycle[i], linestyle=':', label='True '+v)
 
     plt.xlabel('t')
     plt.grid()
