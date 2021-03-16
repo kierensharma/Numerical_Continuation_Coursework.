@@ -83,7 +83,8 @@ def solve_ode(func, X0, t, delta_max, method):
                       Either 'Euler' or 'RK4'.
     
     OUTPUT:
-        Sol         - returns Numpy array of solution values.
+        Sol         - Numpy array of solution values corresponding to the
+                      values in the supplied array t
     """ 
 
     Sol = np.zeros((t.size, X0.size))
