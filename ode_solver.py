@@ -69,15 +69,21 @@ def solve_to(f, x0, t1, t2, delta_max, method):
 
 # Uses 'solve_to' to generate a seriese of estimates for x1,x2,x3,...
 def solve_ode(func, X0, t, delta_max, method):
-    """
-    solve_ode generates a numerical solution to the ODE, or system of ODEs, provided.
+    """Generates a numerical solution to the ODE, or system of ODEs, provided.
 
-    :func: function defining the ODE, or system of ODEs, to be solved
-    :X0: numpy array of initial condition(s)
-    :t: describe about parameter p3
-    :delta_max: maximum step-size allowed within iterative method
-    :method: defines which iterative method is used to approximate solution. Either 'Euler' or 'RK4'
-    :return: returns Numpy array of solution values
+    USAGE:
+        Sol = solve_ode(func, X0, t, delta_max, method)
+
+    INPUT:
+        func        - function defining the ODE, or system of ODEs, to be solved.
+        X0          - numpy array of initial condition(s).
+        t           - describe about parameter p3.
+        delta_max   - maximum step-size allowed within iterative method.
+        method      - defines which iterative method is used to approximate solution, 
+                      Either 'Euler' or 'RK4'.
+    
+    OUTPUT:
+        Sol         - returns Numpy array of solution values.
     """ 
 
     Sol = np.zeros((t.size, X0.size))
