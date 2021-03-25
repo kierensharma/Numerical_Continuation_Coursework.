@@ -3,11 +3,11 @@ from scipy.integrate import solve_ivp
 from scipy.optimize import fsolve
 
 def main():
-    
+    limit_cycle_isolator(predator_prey, (0.5, 2, 40))
 
 # Wrapped function for numerical integrator used in 'shooting' method
 def integrate(ode, u0, T):
-    sol = solve_ivp(ode, (20, T), u0)
+    sol = solve_ivp(ode, (0, T), u0)
 
     return sol.y[:, -1]
 
@@ -17,13 +17,17 @@ def phase_condition(ode, u0, T):  return np.array(ode(0, u0)[0])
 
 
 # Definition of 'shooting' function which returns difference from initial conditions of some arbitrary initial guess ũ0, along with phase condition
-def shooting(ode, u0, T):   return np.hstack((u0 - integrate(ode, u0, T), phase_condition(ode, u0, T)))
+def shooting(ode, est):  
+    u0 = est[0:-1]
+    T = est[-1] 
+    
+    return np.hstack((u0 - integrate(ode, u0, T), phase_condition(ode, u0, T)))
 
 
 # Function which uses numerical root finder to isolate limit cycles, using 'shooting' function and suitable initial guess ũ0
-def limit_cycle_isolator(shoot, u0):
-    root = fsolve 
-
+def limit_cycle_isolator(ode, est):
+    root = fsolve(lambda est: shooting(ode, est), est)
+    print(root)
 
 def predator_prey(t, u0):
     a = 1
