@@ -4,7 +4,9 @@ from scipy.optimize import fsolve
 from matplotlib import pyplot as plt
 
 def main():
-    sol = limit_cycle_isolator(predator_prey, (0.5, 2, 40))
+    # Initial guess for (x, y, T)
+    initial_guess = (0.5, 2, 40)
+    sol = limit_cycle_isolator(predator_prey, initial_guess)
     plt = phase_portrait_plotter(sol)
     # plt.plot(sol.t, sol.y[0, :])
 
