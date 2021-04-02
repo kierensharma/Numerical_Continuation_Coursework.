@@ -34,7 +34,7 @@ def integrate(ode, u0, T):
 def phase_condition(ode, u0, T):  return np.array(ode(0, u0)[0])
 
 
-# Definition of 'shooting' function which returns difference from initial conditions of some arbitrary initial guess ũ0, along with phase condition
+# Definition of 'shooting' function which returns difference from initial conditions of initial guess ũ0
 def shooting(ode, est, phase_condition):  
     u0 = est[0:-1]
     T = est[-1] 
@@ -54,12 +54,14 @@ def limit_cycle_isolator(ode, est, phase_condition):
         Sol = limit_cycle_isolator(ode, est)
 
     INPUT:
-        ode                 - function defining the ODE, or system of ODEs, to be solved.
-        est                 - 
-        phase_condition     - 
+        ode                 - function defining the ODE, or system of ODEs, to be solved. 
+                              Should return the right-hand side of the ODE as a numpy.array.
+        est                 - numpy.array of initial guess, ũ0, at beginnig of limit cycle. Of form (x, y, T).
+        phase_condition     - function defining a suitable phase condition to help isolate the limit cycle.
     
     OUTPUT:
-        Sol                 - 
+        Sol                 - numpy.array containing the corrected initial values for the limit cycle. 
+                              If the numerical root finder failed, the returned array is empty.
     """
     result = fsolve(lambda est: shooting(ode, est, phase_condition), est)
     isolated_sol = orbit(ode, result[0:-1], result[-1])

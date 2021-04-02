@@ -75,15 +75,16 @@ def solve_ode(func, X0, t, delta_max, method):
         Sol = solve_ode(func, X0, t, delta_max, method)
 
     INPUT:
-        func        - function defining the ODE, or system of ODEs, to be solved.
-        X0          - numpy array of initial condition(s).
+        func        - function defining the ODE, or system of ODEs, to be solved. 
+                      Should return the right-hand side of the ODE as a numpy.array.
+        X0          - numpy.array of initial condition(s).
         t           - array of time values to solve over.
         delta_max   - maximum step-size allowed within iterative method.
         method      - defines which iterative method is used to approximate solution, 
                       Either 'Euler' or 'RK4'.
     
     OUTPUT:
-        Sol         - Numpy array of solution values corresponding to the
+        Sol         - numpy.array of solution values corresponding to the
                       values in the supplied array t
     """ 
 
