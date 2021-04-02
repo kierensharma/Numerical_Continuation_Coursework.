@@ -2,36 +2,40 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.optimize import fsolve
 from matplotlib import pyplot as plt
+from ode_solver import solve_ode
 
 def main():
     # Initial guess for (x, y, T)
     initial_guess = (0.5, 2, 40)
-    sol = limit_cycle_isolator(predator_prey, initial_guess)
+    sol = limit_cycle_isolator(predator_prey, initial_guess, phase_condition)
+    print(sol)
     plt = phase_portrait_plotter(sol)
     # plt.plot(sol.t, sol.y[0, :])
 
-    sol = solve_ivp(lambda t, u: predator_prey(t, u), (0, 100), (0.75, 1))
-    plt.plot(sol.y[0, :], sol.y[1, :])
-    sol = solve_ivp(lambda t, u: predator_prey(t, u), (0, 100), (1, 1.5))
-    plt.plot(sol.y[0, :], sol.y[1, :])
-    sol = solve_ivp(lambda t, u: predator_prey(t, u), (0, 100), (1.5, 1.75))
-    plt.plot(sol.y[0, :], sol.y[1, :])
+    # sol = solve_ivp(lambda t, u: predator_prey(t, u), (0, 100), (0.75, 1))
+    # plt.plot(sol.y[0, :], sol.y[1, :])
+    # sol = solve_ivp(lambda t, u: predator_prey(t, u), (0, 100), (1, 1.5))
+    # plt.plot(sol.y[0, :], sol.y[1, :])
+    # sol = solve_ivp(lambda t, u: predator_prey(t, u), (0, 100), (1.5, 1.75))
+    # plt.plot(sol.y[0, :], sol.y[1, :])
 
     plt.show()
 
 # Wrapped function for numerical integrator used in 'shooting' method
 def integrate(ode, u0, T):
+    t = np.linspace(0, T, 50)
     sol = solve_ivp(ode, (0, T), u0)
+    # sol = solve_ode(ode, u0, t, 1, 'RK4')
 
     return sol.y[:, -1]
 
 
-# Function to return phase-condition of dx/dt(0) = 0
+# Function to set the value of dx/dt(0) = 0
 def phase_condition(ode, u0, T):  return np.array(ode(0, u0)[0])
 
 
 # Definition of 'shooting' function which returns difference from initial conditions of some arbitrary initial guess ũ0, along with phase condition
-def shooting(ode, est):  
+def shooting(ode, est, phase_condition):  
     u0 = est[0:-1]
     T = est[-1] 
     
@@ -43,8 +47,21 @@ def orbit(ode, initialu, duration):
 
 
 # Function which uses numerical root finder to isolate limit cycles, using 'shooting' function and suitable initial guess ũ0
-def limit_cycle_isolator(ode, est):
-    result = fsolve(lambda est: shooting(ode, est), est)
+def limit_cycle_isolator(ode, est, phase_condition):
+    """Isolates a periodic orbit (limiti cycle), if one exists, from a system of ODEs.
+
+    USAGE:
+        Sol = limit_cycle_isolator(ode, est)
+
+    INPUT:
+        ode                 - function defining the ODE, or system of ODEs, to be solved.
+        est                 - 
+        phase_condition     - 
+    
+    OUTPUT:
+        Sol                 - 
+    """
+    result = fsolve(lambda est: shooting(ode, est, phase_condition), est)
     isolated_sol = orbit(ode, result[0:-1], result[-1])
 
     # plt.plot(isolated_sol.y[0, :], isolated_sol.y[1, :])
@@ -61,7 +78,7 @@ def phase_portrait_plotter(sol):
     
     return plt
 
-
+# Definition of predator-prey equations (more realistic version of the Lokta-Volterra equations)
 def predator_prey(t, u0):
     a = 1
     b = 0.26
