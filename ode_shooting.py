@@ -29,13 +29,11 @@ def integrate(ode, u0, T):
 
     return sol.y[:, -1]
 
-
 # Function to set the value of dx/dt(0) = 0
 def phase_condition(ode, u0, T):  return np.array(ode(0, u0)[0])
 
-
 # Definition of 'shooting' function which returns difference from initial conditions of initial guess ũ0
-def shooting(ode, est, phase_condition):  
+def shooting(ode, est, phase_condition):
     u0 = est[0:-1]
     T = est[-1] 
     
@@ -44,7 +42,6 @@ def shooting(ode, est, phase_condition):
 def orbit(ode, initialu, duration):
     sol = solve_ivp(ode, (0, duration), initialu)
     return sol
-
 
 # Function which uses numerical root finder to isolate limit cycles, using 'shooting' function and suitable initial guess ũ0
 def limit_cycle_isolator(ode, est, phase_condition):
@@ -63,11 +60,14 @@ def limit_cycle_isolator(ode, est, phase_condition):
         Sol                 - numpy.array containing the corrected initial values for the limit cycle. 
                               If the numerical root finder failed, the returned array is empty.
     """
+    try:
+        ode(1, est[0:-1])
+    except ValueError:
+        print('Error: Please check initial guess. Should be of form (x, y, T)')
+        exit()
+
     result = fsolve(lambda est: shooting(ode, est, phase_condition), est)
     isolated_sol = orbit(ode, result[0:-1], result[-1])
-
-    # plt.plot(isolated_sol.y[0, :], isolated_sol.y[1, :])
-    # plt.show()
 
     return isolated_sol
 
