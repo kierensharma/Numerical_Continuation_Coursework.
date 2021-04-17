@@ -5,8 +5,9 @@ from ode_shooting import phase_portrait_plotter as phase_plt
 def main():
     shooting_result = lim(hoph_bifurcation, [1, 1, 5], phase_condition)
     exact_result = explicit_sol(shooting_result.t)
+    tol = 1e-2
 
-    if np.allclose(shooting_result.y, exact_result, atol=1e-2):
+    if np.allclose(shooting_result.y, exact_result, atol=tol):
         print("Passed test")
     else:
         print("Failed test")
