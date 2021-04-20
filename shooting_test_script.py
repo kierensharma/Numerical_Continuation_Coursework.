@@ -3,7 +3,7 @@ from ode_shooting import limit_cycle_isolator as lim
 from ode_shooting import phase_portrait_plotter as phase_plt
 
 def main():
-    shooting_result = lim(hoph_bifurcation, [1, 5], phase_condition)
+    shooting_result = lim(hoph_bifurcation, [1, 1, 5], phase_condition)
     exact_result = explicit_sol(shooting_result.t)
     tol = 1e-2
 
@@ -13,7 +13,9 @@ def main():
         print("Failed test")
 
     plt = phase_plt(shooting_result)
-    plt.show()
+    plt.plot(exact_result[0], exact_result[1], label='exact')
+    plt.legend()
+    # plt.show()
 
 def hoph_bifurcation(t, u0):
     sigma = -1 
