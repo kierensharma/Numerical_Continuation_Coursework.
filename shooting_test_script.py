@@ -2,7 +2,7 @@ import numpy as np
 from ode_shooting import limit_cycle_isolator as lim
 from ode_shooting import phase_portrait_plotter as phase_plt
 
-def main():
+def main(filename=None):
     shooting_result = lim(hoph_bifurcation, [1, 1, 5], phase_condition)
     exact_result = explicit_sol(shooting_result.t)
     tol = 1e-2
@@ -15,7 +15,12 @@ def main():
     plt = phase_plt(shooting_result)
     plt.plot(exact_result[0], exact_result[1], label='exact')
     plt.legend()
-    plt.show()
+    if filename is None:
+        # (show on screen)
+        plt.show()
+    else:
+        # (save to file)
+        plt.savefig(filename)
 
 def hoph_bifurcation(t, u0):
     sigma = -1 
@@ -40,4 +45,6 @@ def explicit_sol(t):
 def phase_condition(ode, u0, T):  return np.array(ode(0, u0)[0])
 
 if __name__ == '__main__':
-    main()
+    import sys
+    args = sys.argv[1:]
+    main(*args)
