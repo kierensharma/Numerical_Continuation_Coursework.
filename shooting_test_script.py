@@ -15,7 +15,7 @@ def main():
     plt = phase_plt(shooting_result)
     plt.plot(exact_result[0], exact_result[1], label='exact')
     plt.legend()
-    # plt.show()
+    plt.show()
 
 def hoph_bifurcation(t, u0):
     sigma = -1 
