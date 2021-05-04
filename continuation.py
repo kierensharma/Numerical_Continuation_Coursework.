@@ -1,32 +1,29 @@
 import numpy as np
 from ode_shooting import shooting as shoot
+from ode_shooting import limit_cycle_isolator as lim
 from scipy.optimize import fsolve
 
 def main():
-    result = continuation(hoph_bifurcation, [1, 1, 5], phase_condition)
+    result = pseudo_arclength_continuation(hoph_bifurcation, [1, 1, 5], phase_condition)
     print(result)
 
-def continuation(ode, est, phase_condition):
-    result = fsolve(lambda est: np.hstack((shoot(ode, est, phase_condition), 
-                                            pseudo_arclength(ode, est))), est)
+def pseudo_arclength_continuation(ode, est, phase_condition):
+    def stack(ode, est, phase_condition):
+        return np.hstack((shoot(ode, est, phase_condition), 
+                                            pseudo_arclength_equation(ode, est)))
+    
+    print(len(stack(hoph_bifurcation, [1,1,5], phase_condition)))
+    result = fsolve(lambda est: stack(ode, est, phase_condition), est)
     return result
 
-def pseudo_arclength(f, est):
+def pseudo_arclength_equation(f, est):
     u0 = est[0:-1]
-    continuation = np.vdot(secant(f, est), (u0 - predict(f, est)))
-    return continuation
-
-def secant(f, est):
-    u0 = est[0:-1]
-    T = est[-1] 
+    T = est[-1]
 
     dX = np.array(f(T, u0) - u0)
-    return dX
+    u1 = np.array(u0 + dX)
 
-def predict(f, est):
-    u0 = est[0:-1]
-    u1 = np.array(u0 + secant(f, est))
-    return u1
+    return np.vdot(dX, (u0 - u1))
 
 def hoph_bifurcation(t, u0):
     sigma = -1 
