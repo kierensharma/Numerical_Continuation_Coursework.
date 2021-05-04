@@ -63,7 +63,7 @@ def limit_cycle_isolator(ode, est, phase_condition):
     try:
         ode(1, est[0:-1])
     except ValueError:
-        print('Error: Please check initial guess. Should be of form (x, y, T)')
+        print('Error: Please check initial guess. Should be of form (x1,..., xn, T)')
         exit()
 
     result = fsolve(lambda est: shooting(ode, est, phase_condition), est)
