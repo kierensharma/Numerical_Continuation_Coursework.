@@ -4,10 +4,10 @@ from ode_shooting import limit_cycle_isolator as lim
 from scipy.optimize import fsolve
 
 def main():
-    result = pseudo_arclength_continuation(hoph_bifurcation, [1, 1, 5], phase_condition)
+    result = numerical_continuation(hoph_bifurcation, [1, 1, 5], phase_condition)
     print(result)
 
-def pseudo_arclength_continuation(ode, est, phase_condition):
+def numerical_continuation(ode, est, phase_condition):
     def stack(ode, est, phase_condition):
         return np.hstack((shoot(ode, est, phase_condition), 
                                             pseudo_arclength_equation(ode, est)))
