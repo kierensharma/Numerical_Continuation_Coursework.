@@ -4,11 +4,11 @@ from scipy.optimize import fsolve
 
 def main():
     result = continuation(hoph_bifurcation, [1, 1, 5], phase_condition)
-    print(realistic)
+    print(result)
 
 def continuation(ode, est, phase_condition):
-    result = fsolve(lambda est: np.hstack(shoot(ode, est, phase_condition), 
-                                        pseudo_arclength(ode, est)), est)
+    result = fsolve(lambda est: np.hstack((shoot(ode, est, phase_condition), 
+                                            pseudo_arclength(ode, est))), est)
     return result
 
 def pseudo_arclength(f, est):
@@ -20,12 +20,12 @@ def secant(f, est):
     u0 = est[0:-1]
     T = est[-1] 
 
-    dX = np.array(f(u0,T) - u0)
+    dX = np.array(f(T, u0) - u0)
     return dX
 
 def predict(f, est):
     u0 = est[0:-1]
-    u1 = np.array(u0 + secant(f, u0))
+    u1 = np.array(u0 + secant(f, est))
     return u1
 
 def hoph_bifurcation(t, u0):
