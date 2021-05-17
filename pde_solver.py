@@ -26,7 +26,14 @@ def main():
     else:
         print("stability criterion= unstable")
 
-    u_j = forward_Euler(u_I, x, mx, mt, L, kappa, lmbda)
+    # Set up the solution variables
+    u_j = np.zeros(x.size)        # u at current time step
+
+    # Set initial condition
+    for i in range(0, mx+1):
+        u_j[i] = u_I(x[i], L)
+
+    result = forward_Euler(u_j, mx, mt, lmbda)
 
     # Plot the final result and exact solution
     pl.plot(x, u_j,'ro',label='num')
@@ -48,19 +55,13 @@ def u_exact(x, t, L, kappa):
     return y
 
 # Solve the PDE: in matrix form
-def forward_Euler(u_I, x, mx, mt, L, kappa, lmbda):
+def forward_Euler(u_j, mx, mt, lmbda):
+    u_jp1 = np.zeros(u_j.size)    # u at next time step
+
     A_FE = np.zeros([mx-1,mx-1])
     np.fill_diagonal(A_FE, (1-2*lmbda))
     np.fill_diagonal(A_FE[1:], lmbda)
     np.fill_diagonal(A_FE[:,1:], lmbda)
-
-    # Set up the solution variables
-    u_j = np.zeros(x.size)        # u at current time step
-    u_jp1 = np.zeros(x.size)     # u at next time step
-
-    # Set initial condition
-    for i in range(0, mx+1):
-        u_j[i] = u_I(x[i], L)
 
     for j in range(0, mt):
         u_jp1[1:-1] = np.matmul(A_FE, u_j[1:-1].T)
@@ -72,6 +73,10 @@ def forward_Euler(u_I, x, mx, mt, L, kappa, lmbda):
         u_j[:] = u_jp1[:]
 
     return u_j
+
+def backwards_Euler():
+    
+
 
 if __name__ == "__main__":
     main()
