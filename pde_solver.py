@@ -8,35 +8,11 @@ def main():
     L=1.0         # length of spatial domain
     T=0.5         # total time to solve for
 
-    # Set numerical parameters
-    mx = 10     # number of gridpoints in space
-    mt = 1000   # number of gridpoints in time
-
-    # Set up the numerical environment variables
-    x = np.linspace(0, L, mx+1)     # mesh points in space
-    t = np.linspace(0, T, mt+1)     # mesh points in time
-    deltax = x[1] - x[0]            # gridspacing in x
-    deltat = t[1] - t[0]            # gridspacing in t
-    lmbda = kappa*deltat/(deltax**2)    # mesh fourier number
-    print("deltax=",deltax)
-    print("deltat=",deltat)
-    print("lambda=",lmbda)
-    if 0 < lmbda < 0.5:
-        print("stability criterion= stable")
-    else:
-        print("stability criterion= unstable")
-
-    # Set up the solution variables
-    u0 = np.zeros(x.size)        # u at current time step
-
-    # Set initial condition
-    for i in range(0, mx+1):
-        u0[i] = u_I(x[i], L)
-
-    result = pde_solver(u0, mx, mt, lmbda, [0, 0], 'CN')
+    Sol = solve_pde(u_I, [0,0], L, T)
 
     # Plot the final result and exact solution
-    pl.plot(x, result,'ro',label='num')
+    x = np.linspace(0, L, 10+1) 
+    pl.plot(x, Sol,'ro',label='num')
     xx = np.linspace(0,L,250)
     pl.plot(xx, u_exact(xx,T, L, kappa),'b-',label='exact')
     pl.xlabel('x')
@@ -54,20 +30,58 @@ def u_exact(x, t, L, kappa):
     y = np.exp(-kappa*(pi**2/L**2)*t)*np.sin(pi*x/L)
     return y
 
-def pde_solver(u0, mx, mt, lmbda, boundaries, method):
+def solve_pde(eq, bounds, L, T, kappa=1.0, method='CN', mx=10, mt=1000):
+    """Generates a numerical solution to the PDE provided.
+
+    USAGE:
+        Sol = solve_pde(eq, L, T, kappa, boundaries, method, mx, mt)
+
+    INPUT:
+        eq          - intial condition equation which maps 'u' values at t=0.
+        bounds      - boundary conditions, for all values of 'j'.
+        L           - length of the spatial domain.
+        T           - total time to solve for
+        kappa       - diffusion constant (optional).
+        method      - defines which scheme should be used to approximate next
+                      step. Either 'forward' for forward-Euler, 'backward' for
+                      backward-Euler or 'CN' for Crank-Nicholson scheme (optional).
+        mx          - number of gridpoints in space (optional).
+        mt          - number of gridpoints in time (optional).
+    
+    OUTPUT:
+        Sol         - numpy.array of solution values corresponding to the
+                      values in the supplied spacial domain.
+    """
+    # Set up the numerical environment variables
+    x = np.linspace(0, L, mx+1)     # mesh points in space
+    t = np.linspace(0, T, mt+1)     # mesh points in time
+    deltax = x[1] - x[0]            # gridspacing in x
+    deltat = t[1] - t[0]            # gridspacing in t
+    lmbda = kappa*deltat/(deltax**2)    # mesh fourier number
+
+    if lmbda <= 0 or lmbda >= 0.5:
+        print("Error: stability criterion not satisfied.")
+        exit
+
+    # Set up the solution variables
+    u0 = np.zeros(x.size) 
+    # Set initial condition
+    for i in range(0, mx+1):
+        u0[i] = eq(x[i], L)       # u at current time step
+    
     if method == 'forward':
-        result = forward_Euler(u0, mx, mt, lmbda, boundaries)
+        Sol = forward_Euler(u0, mx, mt, lmbda, bounds)
     if method == 'backward':
-        result = backward_Euler(u0, mx, mt, lmbda, boundaries)
+        Sol = backward_Euler(u0, mx, mt, lmbda, bounds)
     if method == 'CN':
-        result = Crank_Nicholson(u0, mx, mt, lmbda, boundaries)
+        Sol = Crank_Nicholson(u0, mx, mt, lmbda, bounds)
     else:
         print('Please provide method: forward, backward or CN.')
     
-    return result
+    return Sol
 
 # Solve the PDE: in matrix form
-def forward_Euler(u_j, mx, mt, lmbda, boundaries):
+def forward_Euler(u_j, mx, mt, lmbda, bounds):
     u_jp1 = np.zeros(u_j.size)    # u at next time step
 
     A_FE = np.zeros([mx-1,mx-1])
@@ -79,14 +93,14 @@ def forward_Euler(u_j, mx, mt, lmbda, boundaries):
         u_jp1[1:-1] = np.matmul(A_FE, u_j[1:-1].T)
 
         # Boundary conditions
-        u_jp1[0] = boundaries[0]; u_jp1[mx] = boundaries[-1]
+        u_jp1[0] = bounds[0]; u_jp1[mx] = bounds[-1]
             
         # Save u_j at time t[j+1]
         u_j[:] = u_jp1[:]
 
     return u_j
 
-def backward_Euler(u_j, mx, mt, lmbda, boundaries):
+def backward_Euler(u_j, mx, mt, lmbda, bounds):
     u_jp1 = np.zeros(u_j.size)    # u at next time step
 
     A_BE = np.zeros([mx-1,mx-1])
@@ -98,7 +112,7 @@ def backward_Euler(u_j, mx, mt, lmbda, boundaries):
         u_jp1[1:-1] = np.linalg.solve(A_BE, u_j[1:-1].T)
 
         # Boundary conditions
-        u_jp1[0] = boundaries[0]; u_jp1[mx] = boundaries[-1]
+        u_jp1[0] = bounds[0]; u_jp1[mx] = bounds[-1]
             
         # Save u_j at time t[j+1]
         u_j[:] = u_jp1[:]
