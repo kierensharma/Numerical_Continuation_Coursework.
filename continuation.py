@@ -10,9 +10,8 @@ def main():
 def numerical_continuation(ode, est, phase_condition):
     def stack(ode, est, phase_condition):
         return np.hstack((shoot(ode, est, phase_condition), 
-                                            pseudo_arclength_equation(ode, est)))
+                            pseudo_arclength_equation(ode, est)))
     
-    print(len(stack(hoph_bifurcation, [1,1,5], phase_condition)))
     result = fsolve(lambda est: stack(ode, est, phase_condition), est)
     return result
 
