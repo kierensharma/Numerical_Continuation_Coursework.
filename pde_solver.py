@@ -33,9 +33,9 @@ def main():
     for i in range(0, mx+1):
         u_0[i] = u_I(x[i], L)
 
-    # result = forward_Euler(u_0, mx, mt, lmbda)
-    # result = backward_Euler(u_0, mx, mt, lmbda)
-    result = Crank_Nicholson(u_0, mx, mt, lmbda)
+    # result = forward_Euler(u_0, mx, mt, lmbda, [0, 0])
+    # result = backward_Euler(u_0, mx, mt, lmbda, [0, 0])
+    result = Crank_Nicholson(u_0, mx, mt, lmbda, [0, 0])
 
     # Plot the final result and exact solution
     pl.plot(x, result,'ro',label='num')
@@ -57,7 +57,7 @@ def u_exact(x, t, L, kappa):
     return y
 
 # Solve the PDE: in matrix form
-def forward_Euler(u_j, mx, mt, lmbda):
+def forward_Euler(u_j, mx, mt, lmbda, boundaries):
     u_jp1 = np.zeros(u_j.size)    # u at next time step
 
     A_FE = np.zeros([mx-1,mx-1])
@@ -69,14 +69,14 @@ def forward_Euler(u_j, mx, mt, lmbda):
         u_jp1[1:-1] = np.matmul(A_FE, u_j[1:-1].T)
 
         # Boundary conditions
-        u_jp1[0] = 0; u_jp1[mx] = 0
+        u_jp1[0] = boundaries[0]; u_jp1[mx] = boundaries[-1]
             
         # Save u_j at time t[j+1]
         u_j[:] = u_jp1[:]
 
     return u_j
 
-def backward_Euler(u_j, mx, mt, lmbda):
+def backward_Euler(u_j, mx, mt, lmbda, boundaries):
     u_jp1 = np.zeros(u_j.size)    # u at next time step
 
     A_BE = np.zeros([mx-1,mx-1])
@@ -88,14 +88,14 @@ def backward_Euler(u_j, mx, mt, lmbda):
         u_jp1[1:-1] = np.linalg.solve(A_BE, u_j[1:-1].T)
 
         # Boundary conditions
-        u_jp1[0] = 0; u_jp1[mx] = 0
+        u_jp1[0] = boundaries[0]; u_jp1[mx] = boundaries[-1]
             
         # Save u_j at time t[j+1]
         u_j[:] = u_jp1[:]
 
     return u_j
 
-def Crank_Nicholson(u_j, mx, mt, lmbda):
+def Crank_Nicholson(u_j, mx, mt, lmbda, boundaries):
     u_jp1 = np.zeros(u_j.size)    # u at next time step
 
     A_CN = np.zeros([mx-1,mx-1])
@@ -112,7 +112,7 @@ def Crank_Nicholson(u_j, mx, mt, lmbda):
         u_jp1[1:-1] = np.linalg.solve(A_CN, np.matmul(B_CN, u_j[1:-1].T))
 
         # Boundary conditions
-        u_jp1[0] = 0; u_jp1[mx] = 0
+        u_jp1[0] = boundaries[0]; u_jp1[mx] = boundaries[-1]
             
         # Save u_j at time t[j+1]
         u_j[:] = u_jp1[:]
