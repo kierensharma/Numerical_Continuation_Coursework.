@@ -44,19 +44,21 @@ else:
 
 # Set up the solution variables
 u_j = np.zeros(x.size)        # u at current time step
-u_jp1 = np.zeros(x.size)      # u at next time step
+u_jp1 = np.zeros(x.size)     # u at next time step
 
 # Set initial condition
 for i in range(0, mx+1):
     u_j[i] = u_I(x[i])
 
-# Solve the PDE: loop over all time points
+# Solve the PDE: in matrix form
+A_FE = np.zeros([mx-1,mx-1])
+np.fill_diagonal(A_FE, (1-2*lmbda))
+np.fill_diagonal(A_FE[1:], lmbda)
+np.fill_diagonal(A_FE[:,1:], lmbda)
+
 for j in range(0, mt):
-    # Forward Euler timestep at inner mesh points
-    # PDE discretised at position x[i], time t[j]
-    for i in range(1, mx):
-        u_jp1[i] = u_j[i] + lmbda*(u_j[i-1] - 2*u_j[i] + u_j[i+1])
-        
+    u_jp1[1:-1] = np.matmul(A_FE, u_j[1:-1].T)
+
     # Boundary conditions
     u_jp1[0] = 0; u_jp1[mx] = 0
         
