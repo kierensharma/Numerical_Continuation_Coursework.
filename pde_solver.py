@@ -27,15 +27,13 @@ def main():
         print("stability criterion= unstable")
 
     # Set up the solution variables
-    u_0 = np.zeros(x.size)        # u at current time step
+    u0 = np.zeros(x.size)        # u at current time step
 
     # Set initial condition
     for i in range(0, mx+1):
-        u_0[i] = u_I(x[i], L)
+        u0[i] = u_I(x[i], L)
 
-    # result = forward_Euler(u_0, mx, mt, lmbda, [0, 0])
-    # result = backward_Euler(u_0, mx, mt, lmbda, [0, 0])
-    result = Crank_Nicholson(u_0, mx, mt, lmbda, [0, 0])
+    result = pde_solver(u0, mx, mt, lmbda, [0, 0], 'CN')
 
     # Plot the final result and exact solution
     pl.plot(x, result,'ro',label='num')
@@ -55,6 +53,18 @@ def u_exact(x, t, L, kappa):
     # the exact solution
     y = np.exp(-kappa*(pi**2/L**2)*t)*np.sin(pi*x/L)
     return y
+
+def pde_solver(u0, mx, mt, lmbda, boundaries, method):
+    if method == 'forward':
+        result = forward_Euler(u0, mx, mt, lmbda, boundaries)
+    if method == 'backward':
+        result = backward_Euler(u0, mx, mt, lmbda, boundaries)
+    if method == 'CN':
+        result = Crank_Nicholson(u0, mx, mt, lmbda, boundaries)
+    else:
+        print('Please provide method: forward, backward or CN.')
+    
+    return result
 
 # Solve the PDE: in matrix form
 def forward_Euler(u_j, mx, mt, lmbda, boundaries):
