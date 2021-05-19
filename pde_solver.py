@@ -4,11 +4,11 @@ from math import pi
 
 def main():
     # Set problem parameters/functions
-    kappa = 1.0   # diffusion constant
-    L=1.0         # length of spatial domain
-    T=0.5         # total time to solve for
+    kappa = 1.0  
+    L=1.0         
+    T=0.5  
 
-    Sol = solve_pde(u_I, [0,0], L, T)
+    Sol = solve_pde(u_I, [0,0], L, T, method='forward')
 
     # Plot the final result and exact solution
     x = np.linspace(0, L, 10+1) 
