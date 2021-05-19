@@ -6,8 +6,9 @@ from ode_solver import solve_ode
 
 def main():
     # Initial guess for (x, y, T)
-    initial_guess = (0.5, 2, 40)
-    sol = limit_cycle_isolator(predator_prey, initial_guess, phase_condition)
+    initial_guess = [0.5, 2, 40]
+    params = [1, 0.26, 0.1]
+    sol = limit_cycle_isolator(ode(predator_prey, params), initial_guess, phase_condition)
     print(sol)
     plt = phase_portrait_plotter(sol)
     # plt.plot(sol.t, sol.y[0, :])
@@ -30,7 +31,7 @@ def integrate(ode, u0, T):
     return sol.y[:, -1]
 
 # Function to set the value of dx/dt(0) = 0
-def phase_condition(ode, u0, T):  return np.array(ode(0, u0)[0])
+def phase_condition(ode, u0, T): return np.array(ode(0, u0)[0])
 
 # Definition of 'shooting' function which returns difference from initial conditions of initial guess ũ0
 def shooting(ode, est, phase_condition):
@@ -42,6 +43,8 @@ def shooting(ode, est, phase_condition):
 def orbit(ode, initialu, duration):
     sol = solve_ivp(ode, (0, duration), initialu)
     return sol
+
+def ode(function: callable, params: list): return lambda t, U: function(t, U, params)
 
 # Function which uses numerical root finder to isolate limit cycles, using 'shooting' function and suitable initial guess ũ0
 def limit_cycle_isolator(ode, est, phase_condition):
@@ -67,6 +70,7 @@ def limit_cycle_isolator(ode, est, phase_condition):
         exit()
 
     result = fsolve(lambda est: shooting(ode, est, phase_condition), est)
+    print(result)
     isolated_sol = orbit(ode, result[0:-1], result[-1])
 
     return isolated_sol
@@ -81,10 +85,12 @@ def phase_portrait_plotter(sol):
     return plt
 
 # Definition of predator-prey equations (more realistic version of the Lokta-Volterra equations)
-def predator_prey(t, u0):
-    a = 1
-    b = 0.26
-    d = 0.1
+def predator_prey(t, u0, params: list):
+    # a = 1
+    # b = 0.26
+    # d = 0.1
+
+    a, b, d = params
 
     x, y = u0
     dxdt = x*(1 - x) - (a*x*y)/(d + x)
