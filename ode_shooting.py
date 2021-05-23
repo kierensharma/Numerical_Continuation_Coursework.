@@ -8,8 +8,9 @@ def main():
     # Initial guess for (x, y, T)
     initial_guess = [0.5, 2, 40]
     params = [1, 0.26, 0.1]
-    sol = limit_cycle_isolator(ode(predator_prey, params), initial_guess, phase_condition)
-    print(sol)
+    # sol = limit_cycle_isolator(ode(predator_prey, params), initial_guess, phase_condition)
+    sol = limit_cycle_isolator(ode(hoph_bifurcation, 2), [1,1,5], phase_condition)
+    # print(sol)
     plt = phase_portrait_plotter(sol)
     # plt.plot(sol.t, sol.y[0, :])
 
@@ -98,6 +99,17 @@ def predator_prey(t, u0, params: list):
     dXdt = np.array([dxdt, dydt])
 
     return dXdt
+
+def hoph_bifurcation(t, u0, params):
+    # beta = 3
+    beta = params
+
+    u1, u2 = u0
+    du1dt = beta*u1 - u2 - u1*(u1**2 + u2**2)
+    du2dt = u1 + beta*u2 - u2*(u1**2 + u2**2)
+    dUdt = np.array([du1dt, du2dt])
+
+    return dUdt
 
 if __name__ == '__main__':
     main()

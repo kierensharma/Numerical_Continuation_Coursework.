@@ -3,6 +3,7 @@ from ode_shooting import shooting as shoot
 from ode_shooting import limit_cycle_isolator as lim
 from scipy.optimize import fsolve
 from matplotlib import pyplot as plt
+from numpy import linalg as LA
 
 def main():
     # # Testing natural parameter continuation on the algebraic cubic equation.
@@ -13,13 +14,28 @@ def main():
     # plt.show()
 
     # Initial guess for (x, y, T)
-    initial_guess = [0.5, 2, 40]
-    second_guess = [0.5, 2, 40]
+    initial_guess = [3, 0.018, 6.3]
+    second_guess = [3, 0.018, 6.29]
+    param = np.arange(3, -3, -0.05)
+    # sol = pseudo_arclength_continuation(hoph_bifurcation, [1, 1, 6, 1], [1.5, 1.5, 6, 1.1], phase_condition)
+    # print(sol)
+    # phase_portrait_plotter(sol)
 
-    sols = natural_parameter_continuation(hoph_bifurcation, initial_guess, second_guess,  np.linspace(0, 2, 200), phase_condition)
-    print(sols)
-    # result = numerical_continuation(hoph_bifurcation, [0.5,2,40,0], [1,3,45,1], phase_condition)
-    # print(result)
+
+    sols = natural_parameter_continuation(hoph_bifurcation, initial_guess, second_guess,  param, phase_condition)
+    # print(sols)
+    norms = []
+    for sol in sols:
+        norms.append(LA.norm(sol[:-1]))
+
+    plt.plot(param, norms)
+    plt.xlabel(r'$\beta$')
+    plt.ylabel(r'$\|\|x\|\|$')
+    plt.xlim([-2, 2])
+    plt.ylim([-0.09, 2])
+    plt.grid()
+    plt.title('Pseudo-arclength Continuation of Hoph Bifurcation')
+    plt.show()
 
 def cubic_continuation(eq, est, params):
     c1 = est[-1]
@@ -33,34 +49,41 @@ def cubic_continuation(eq, est, params):
         sols = np.append(sols, sol)
     return sols
 
-def pseudo_arclength_continuation(pde, initial, second, phase_condition):
-    def stack(f, initial, second, phase_condition):
-        est = second[:-1]
-        c = second[-1]
+def pseudo_arclength_continuation(pde, current, guess, phase_condition):
+    def stack(f, current, guess, phase_condition):
+        est = guess[:-1]
+        c = guess[-1]
 
-        print(np.hstack((shoot(wrap(f, c), est, phase_condition), 
-                            pseudo_arclength_equation(initial, second))))
+        # print(guess)
 
         return np.hstack((shoot(wrap(f, c), est, phase_condition), 
-                            pseudo_arclength_equation(initial, second)))
+                            pseudo_arclength_equation(current, guess)))
 
-    result = fsolve(lambda second: stack(pde, initial, second, phase_condition), second)
-    return result
+    corrected = fsolve(lambda U: stack(pde, current, U, phase_condition), guess)
+    return corrected
 
 def natural_parameter_continuation(f, est1, est2, param, phase_condition):
-    sol1 = est1
-    sol2 = est2
-    initials = np.append(sol1, param[0])
-    initials2 = np.append(sol2, param[1])
-    sol = pseudo_arclength_continuation(f, initials, initials2, phase_condition)
-    sols = np.array(sol)
+    sols = np.array([est1])
+    sols = np.append(sols, [est2], axis=0)
 
-    for c in param:
-        initials = np.append(sol, c)
-        initials2 = np.append(sols[-2], c)
-        sol = pseudo_arclength_continuation(f, initials, initials2, phase_condition)
-        sols = np.append(sols, sol)
-    return sols
+    for index in range(1,len(param)):
+        current = np.append(sols[-1], param[index])
+        guess = current + secant(np.append(sols[-2],param[index-1]), current)
+        sol = pseudo_arclength_continuation(f, current, guess, phase_condition)
+        sols = np.append(sols, [sol[:-1]], axis=0)
+
+    return sols[1:]
+
+def secant(initials, second_guess):
+    x0 = initials[:-1]
+    p0 = initials[-1]
+    v0 = np.append(x0, p0)
+
+    x1 = second_guess[:-1]
+    p1 = second_guess[-1]
+    v1 = np.append(x1, p1)
+
+    return v1-v0
 
 def pseudo_arclength_equation(initials, second_guess):
     x0 = initials[:-1]
@@ -71,10 +94,10 @@ def pseudo_arclength_equation(initials, second_guess):
     p1 = second_guess[-1]
     v1 = np.append(x1, p1)
 
-    secant = v1-v0
-    prod = v1 - secant
+    # secant = v1-v0
+    prod = v1 - secant(initials, second_guess)
 
-    return np.dot(secant, prod)
+    return np.dot(secant(initials, second_guess), prod)
 
 def wrap(function: callable, params): return lambda t, U: function(t, U, params)
 
