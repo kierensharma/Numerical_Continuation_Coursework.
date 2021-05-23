@@ -16,7 +16,7 @@ def main():
     # Initial guess for (x, y, T)
     initial_guess = [3, 0.018, 6.3]
     second_guess = [3, 0.018, 6.29]
-    param = np.arange(3, -3, -0.05)
+    param = np.arange(3, -3, -0.01)
     # sol = pseudo_arclength_continuation(hoph_bifurcation, [1, 1, 6, 1], [1.5, 1.5, 6, 1.1], phase_condition)
     # print(sol)
     # phase_portrait_plotter(sol)
@@ -74,16 +74,7 @@ def natural_parameter_continuation(f, est1, est2, param, phase_condition):
 
     return sols[1:]
 
-def secant(initials, second_guess):
-    x0 = initials[:-1]
-    p0 = initials[-1]
-    v0 = np.append(x0, p0)
-
-    x1 = second_guess[:-1]
-    p1 = second_guess[-1]
-    v1 = np.append(x1, p1)
-
-    return v1-v0
+def secant(initials, second_guess): return second_guess-initials
 
 def pseudo_arclength_equation(initials, second_guess):
     x0 = initials[:-1]
