@@ -121,8 +121,8 @@ def plot_solution(varbs, t, Sol, Sol_true):
     plt.title('Time series: $x, v$ against $t$')
 
     for i,v in zip(range(Sol[0].size), varbs):
-        plt.plot(t, Sol[:, i], color=cycle[i], label=v)
-        plt.plot(t, Sol_true[:, i], color=cycle[i], linestyle=':', label='True '+v)
+        plt.scatter(t, Sol[:, i], color=cycle[i], s=8, label=v)
+        plt.plot(t, Sol_true[:, i], color=cycle[i], label='True '+v)
 
     plt.xlabel('t')
     plt.yticks([-1, 0, 1])
