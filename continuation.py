@@ -37,6 +37,7 @@ def main():
     plt.title('Pseudo-arclength Continuation of Hoph Bifurcation')
     plt.show()
 
+# Testing natural parameter continuation on the algebraic cubic equation.
 def cubic_continuation(eq, est, params):
     c1 = est[-1]
     u0 = est[:-1]
@@ -49,12 +50,12 @@ def cubic_continuation(eq, est, params):
         sols = np.append(sols, sol)
     return sols
 
+# Function which root-solves the 4 equation and 4 unknown stack of shooting and pseudo-arclength equation.
 def pseudo_arclength_continuation(pde, current, guess, phase_condition):
+    # Returns a stack of shooting result and pseudo-arclength equation, for a given parameter value (c).
     def stack(f, current, guess, phase_condition):
         est = guess[:-1]
         c = guess[-1]
-
-        # print(guess)
 
         return np.hstack((shoot(wrap(f, c), est, phase_condition), 
                             pseudo_arclength_equation(current, guess)))
@@ -62,6 +63,7 @@ def pseudo_arclength_continuation(pde, current, guess, phase_condition):
     corrected = fsolve(lambda U: stack(pde, current, U, phase_condition), guess)
     return corrected
 
+# Varying a given parameter of the system to generate a series of solutions within the range.
 def natural_parameter_continuation(f, est1, est2, param, phase_condition):
     sols = np.array([est1])
     sols = np.append(sols, [est2], axis=0)
@@ -76,20 +78,21 @@ def natural_parameter_continuation(f, est1, est2, param, phase_condition):
 
 def secant(initials, second_guess): return second_guess-initials
 
-def pseudo_arclength_equation(initials, second_guess):
-    x0 = initials[:-1]
-    p0 = initials[-1]
+# Function which calculates the pseudo-arclength equation in a system given the current point and previous point.
+def pseudo_arclength_equation(previous, current):
+    x0 = previous[:-1]
+    p0 = previous[-1]
     v0 = np.append(x0, p0)
 
-    x1 = second_guess[:-1]
-    p1 = second_guess[-1]
+    x1 = current[:-1]
+    p1 = current[-1]
     v1 = np.append(x1, p1)
 
-    # secant = v1-v0
-    prod = v1 - secant(initials, second_guess)
+    term = v1 - secant(previous, current)
 
-    return np.dot(secant(initials, second_guess), prod)
+    return np.dot(secant(previous, current), term)
 
+# Wrapper function which returns a callable system (t, U) with a set value for the parameter provided.
 def wrap(function: callable, params): return lambda t, U: function(t, U, params)
 
 def hoph_bifurcation(t, u0, params):
