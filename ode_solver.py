@@ -7,7 +7,7 @@ def main(filename=None):
     X0 = np.array([0, 1])
     t = np.linspace(0,10,200)
 
-    Sol = solve_ode(func, X0, t, 1, 'RK4')
+    Sol = solve_ode(func, X0, t, 'RK4')
     Sol_true = odeint(func, X0, t)
 
     varbs = ['x', 'v']
@@ -68,7 +68,7 @@ def solve_to(f, x0, t1, t2, delta_max, method):
 
 
 # Uses 'solve_to' to generate a seriese of estimates for x1,x2,x3,...
-def solve_ode(func, X0, t, delta_max, method):
+def solve_ode(func, X0, t, method, delta_max=1):
     """Generates a numerical solution to the ODE, or system of ODEs, provided.
 
     USAGE:
