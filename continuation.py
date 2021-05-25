@@ -17,12 +17,12 @@ def main():
     initial_guess = [3, 0.018, 6.3]
     second_guess = [3, 0.018, 6.29]
     param = np.arange(3, -3, -0.01)
-    # sol = pseudo_arclength_continuation(hoph_bifurcation, [1, 1, 6, 1], [1.5, 1.5, 6, 1.1], phase_condition)
+    # sol = pseudo_arclength_continuation(hopf_bifurcation, [1, 1, 6, 1], [1.5, 1.5, 6, 1.1], phase_condition)
     # print(sol)
     # phase_portrait_plotter(sol)
 
 
-    sols = natural_parameter_continuation(hoph_bifurcation, initial_guess, second_guess,  param, phase_condition)
+    sols = natural_parameter_continuation(hopf_bifurcation, initial_guess, second_guess,  param, phase_condition)
     # print(sols)
     norms = []
     for sol in sols:
@@ -34,7 +34,7 @@ def main():
     plt.xlim([-2, 2])
     plt.ylim([-0.09, 2])
     plt.grid()
-    plt.title('Pseudo-arclength Continuation of Hoph Bifurcation')
+    plt.title('Pseudo-arclength Continuation of Hopf Bifurcation')
     plt.show()
 
 # Testing natural parameter continuation on the algebraic cubic equation.
@@ -95,7 +95,7 @@ def pseudo_arclength_equation(previous, current):
 # Wrapper function which returns a callable system (t, U) with a set value for the parameter provided.
 def wrap(function: callable, params): return lambda t, U: function(t, U, params)
 
-def hoph_bifurcation(t, u0, params):
+def hopf_bifurcation(t, u0, params):
     # beta = 3
     beta = params
 

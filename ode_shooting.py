@@ -9,7 +9,7 @@ def main():
     initial_guess = [0.5, 2, 40]
     params = [1, 0.26, 0.1]
     # sol = limit_cycle_isolator(ode(predator_prey, params), initial_guess, phase_condition)
-    sol = limit_cycle_isolator(ode(hoph_bifurcation, 2), [1,1,5], phase_condition)
+    sol = limit_cycle_isolator(ode(hopf_bifurcation, 2), [1,1,5], phase_condition)
     # print(sol)
     plt = phase_portrait_plotter(sol)
     # plt.plot(sol.t, sol.y[0, :])
@@ -100,7 +100,7 @@ def predator_prey(t, u0, params: list):
 
     return dXdt
 
-def hoph_bifurcation(t, u0, params):
+def hopf_bifurcation(t, u0, params):
     # beta = 3
     beta = params
 
