@@ -1,4 +1,4 @@
-# Scientific Computing Coursework 2021
+# Numerical Continuation Library
 
 ## Project Description
 Repository for EMAT30008 Scientific Computing - Numerical continuation coursework. 
