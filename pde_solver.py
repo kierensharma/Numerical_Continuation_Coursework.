@@ -8,7 +8,7 @@ def main():
     L=1.0         
     T=0.5  
 
-    Sol = solve_pde(u_I, [0,0], L, T, method='forward')
+    Sol = solve_pde(u_I, [0,0], L, T)
 
     # Plot the final result and exact solution
     x = np.linspace(0, L, 10+1) 
